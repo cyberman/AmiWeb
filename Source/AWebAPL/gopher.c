@@ -236,7 +236,15 @@ static BOOL Makegopheraddr(struct Gopheraddr *ha,UBYTE *name)
    if(*p) p++; /* skip / */
    if(*p)
    {  ha->type=*p++;
-      strcpy(q,p);
+      /* bounded copy: avoid overflowing ha->buf */
+      {
+         long remain = (long)(ha->buf + len + 2 - q);
+         if(remain > 0)
+         {
+            strncpy(q, p, remain - 1);
+            q[remain - 1] = '\0';
+         }
+      }
    }
    else
    {  ha->type='1';
@@ -288,8 +296,9 @@ static void Builddir(struct Fetchdriver *fd,struct GResponse *resp,long read)
 
    if(!Addtobuffer(&resp->buf,fd->block,read)) return;
    if(!resp->headerdone)
-   {  sprintf(fd->block,"<html><h1>%s</h1>",AWEBSTR(MSG_AWEB_GOPHERMENU));
-      length=strlen(fd->block);
+   {  length = sprintf(fd->block, "<html><h1>%s</h1>", AWEBSTR(MSG_AWEB_GOPHERMENU));
+      if(length < 0) length = 0;
+      if(length >= fd->blocksize) length = fd->blocksize - 1;
       resp->headerdone=TRUE;
    }
    for(;;)
@@ -489,8 +498,9 @@ static void Deleteperiods(struct Fetchdriver *fd,struct GResponse *resp,long rea
 static void Makeindex(struct Fetchdriver *fd)
 {  long length;
    /* we ought to do different msg for cso and normal indexes */
-   sprintf(fd->block,"<html><h1>%s</h1><isindex>",AWEBSTR(MSG_AWEB_GOPHERINDEX));
-   length=strlen(fd->block);
+   length = sprintf(fd->block, "<html><h1>%s</h1><isindex>", AWEBSTR(MSG_AWEB_GOPHERINDEX));
+   if(length < 0) length = 0;
+   if(length >= fd->blocksize) length = fd->blocksize - 1;
    Updatetaskattrs(
       AOURL_Data,fd->block,
       AOURL_Datalength,length,
@@ -523,7 +533,9 @@ __saveds __asm void Fetchdrivertask(register __a0 struct Fetchdriver *fd)
                   {  Updatetaskattrs(AOURL_Netstatus,NWS_CONNECT,TAG_END);
                      Tcpmessage(fd,TCPMSG_CONNECT,"Gopher",hent->h_name);
                      if(!a_connect(sock,hent,ha.port,SocketBase))
-                     {  length=sprintf(fd->block,"%s\r\n",ha.selector);
+                     {  length = sprintf(fd->block, "%s\r\n", ha.selector ? ha.selector : "");
+                        if(length < 0) length = 0;
+                        if(length >= fd->blocksize) length = fd->blocksize - 1;
                         result=(a_send(sock,fd->block,length,0,SocketBase)==length);
                         if(result)
                         {  Updatetaskattrs(AOURL_Netstatus,NWS_WAIT,TAG_END);
