@@ -478,12 +478,13 @@ static void Deleteperiods(struct Fetchdriver *fd,struct GResponse *resp,long rea
       p++;
       memmove(fd->block+length,begin,p-begin);
       length+=p-begin;
-      if(length>INPUTBLOCKSIZE-1000)
+      if(length > fd->blocksize - 1024)
       {  Updatetaskattrs(
             AOURL_Data,fd->block,
             AOURL_Datalength,length,
             TAG_END);
          length=0;
+         fd->block[0] = '\0';
       }
       Deleteinbuffer(&resp->buf,0,p-resp->buf.buffer);
    }
