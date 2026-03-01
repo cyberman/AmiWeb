@@ -285,14 +285,14 @@ static void Builddir(struct Fetchdriver *fd,struct GResponse *resp,long read)
    UBYTE *icon;
    long length=0;
 
-   /* Keep a safety margin so sprintf() never runs into the end of fd->block */
-   const long FLUSH_MARGIN = 1024;
-
    /* Defensive caps for untrusted gopher fields (keeps sprintf bounded) */
+   const long FLUSH_MARGIN = 1024;
    const long MAX_HOST = 255;
    const long MAX_PORT = 15;
-   const long MAX_SEL  = 1024;
-   const long MAX_DESC = 1024;
+
+   /* Keep these small enough that one sprintf() chunk always fits in FLUSH_MARGIN */
+   const long MAX_SEL  = 255;
+   const long MAX_DESC = 255;
 
    if(!Addtobuffer(&resp->buf,fd->block,read)) return;
    if(!resp->headerdone)
