@@ -29,9 +29,6 @@
 #include "task.h"
 #include "awebtcp.h"
 #include <exec/resident.h>
-#include <proto/utility.h>
-#include <stdarg.h>
-
 
 #ifndef LOCALONLY
 
@@ -239,15 +236,7 @@ static BOOL Makegopheraddr(struct Gopheraddr *ha,UBYTE *name)
    if(*p) p++; /* skip / */
    if(*p)
    {  ha->type=*p++;
-      /* bounded copy: avoid overflowing ha->buf */
-      {
-         long remain = (long)(ha->buf + len + 2 - q);
-         if(remain > 0)
-         {
-            Strncpy(q, p, remain - 1);
-            q[remain - 1] = '\0';
-         }
-      }
+      strcpy(q,p);
    }
    else
    {  ha->type='1';
@@ -287,20 +276,10 @@ static void Builddir(struct Fetchdriver *fd,struct GResponse *resp,long read)
    UBYTE type;
    UBYTE *icon;
    long length=0;
-
-   /* Defensive caps for untrusted gopher fields (keeps formatted output bounded) */
-   const long FLUSH_MARGIN = 1024;
-   const long MAX_HOST = 255;
-   const long MAX_PORT = 15;
-
-   /* Keep these small enough that one formatted chunk always fits in FLUSH_MARGIN */
-   const long MAX_SEL  = 255;
-   const long MAX_DESC = 255;
-
    if(!Addtobuffer(&resp->buf,fd->block,read)) return;
    if(!resp->headerdone)
-   {  length = SNPrintf(fd->block, fd->blocksize,
-         "<html><h1>%s</h1>", AWEBSTR(MSG_AWEB_GOPHERMENU));
+   {  sprintf(fd->block,"<html><h1>%s</h1>",AWEBSTR(MSG_AWEB_GOPHERMENU));
+      length=strlen(fd->block);
       resp->headerdone=TRUE;
    }
    for(;;)
@@ -367,76 +346,56 @@ static void Builddir(struct Fetchdriver *fd,struct GResponse *resp,long read)
             case 'h':
             case 'I':
             case 's':
-               {
-                  if(length > fd->blocksize - FLUSH_MARGIN)
+               {  length+=sprintf(fd->block+length,
+                     "<BR>%s <A HREF=\"gopher://%s:%s/%c%s\">%s</A>",
+                     icon,host,hport,type,selector,descr);
+                  if(length>INPUTBLOCKSIZE-1000)
                   {  Updatetaskattrs(
                         AOURL_Data,fd->block,
                         AOURL_Datalength,length,
                         TAG_END);
-                     length = 0;
-                     fd->block[0] = '\0';
+                     length=0;
                   }
-                  length += SNPrintf(fd->block + length, fd->blocksize - length,
-                     "<BR>%s <A HREF=\"gopher://%.*s:%.*s/%c%.*s\">%.*s</A>",
-                     icon,
-                     (int)MAX_HOST, host,
-                     (int)MAX_PORT, hport,
-                     type,
-                     (int)MAX_SEL, selector,
-                     (int)MAX_DESC, descr);
                   break;
                }
             /* telnet type */
             case '8':
-               {
-                  if(length > fd->blocksize - FLUSH_MARGIN)
+               {  length+=sprintf(fd->block+length,
+                     "<BR>%s <A HREF=\"telnet://%s:%s\">%s</A>",
+                     icon,host,hport,descr);
+                  if(length>INPUTBLOCKSIZE-1000)
                   {  Updatetaskattrs(
                         AOURL_Data,fd->block,
                         AOURL_Datalength,length,
                         TAG_END);
-                     length = 0;
-                     fd->block[0] = '\0';
+                     length=0;
                   }
-                  length += SNPrintf(fd->block + length, fd->blocksize - length,
-                    "<BR>%s <A HREF=\"telnet://%.*s:%.*s\">%.*s</A>",
-                    icon,
-                    (int)MAX_HOST, host,
-                    (int)MAX_PORT, hport,
-                    (int)MAX_DESC, descr);
                   break;
                }
             /* www link type */
             case 'w':
-               {
-                  if(length > fd->blocksize - FLUSH_MARGIN)
+               {  length+=sprintf(fd->block+length,
+                     "<BR>%s <A HREF=\"http://%s:%s%s\">%s</A>",
+                     icon,host,hport,selector,descr);
+                  if(length>INPUTBLOCKSIZE-1000)
                   {  Updatetaskattrs(
                         AOURL_Data,fd->block,
                         AOURL_Datalength,length,
                         TAG_END);
-                     length = 0;
-                     fd->block[0] = '\0';
+                     length=0;
                   }
-                  length += SNPrintf(fd->block + length, fd->blocksize - length,
-                    "<BR>%s <A HREF=\"http://%.*s:%.*s%.*s\">%.*s</A>",
-                    icon,
-                    (int)MAX_HOST, host,
-                    (int)MAX_PORT, hport,
-                    (int)MAX_SEL, selector,
-                    (int)MAX_DESC, descr);
                   break;
                }
             /* info link type */
             case 'i':
-               {
-                  if(length > fd->blocksize - FLUSH_MARGIN)
+               {  length+=sprintf(fd->block+length,"<BR>%s",descr);
+                  if(length>INPUTBLOCKSIZE-1000)
                   {  Updatetaskattrs(
                         AOURL_Data,fd->block,
                         AOURL_Datalength,length,
                         TAG_END);
-                     length = 0;
-                     fd->block[0] = '\0';
+                     length=0;
                   }
-                  length += SNPrintf(fd->block + length, fd->blocksize - length, "<BR>%.*s", (int)MAX_DESC, descr);
                   break;
                }
             default:
@@ -445,15 +404,14 @@ static void Builddir(struct Fetchdriver *fd,struct GResponse *resp,long read)
       }
       else
       {  /* show any information that doesn't have a known type */
-         if(length > fd->blocksize - FLUSH_MARGIN)
+         length+=sprintf(fd->block+length,"<BR>%s",descr);
+         if(length>INPUTBLOCKSIZE-1000)
          {  Updatetaskattrs(
                AOURL_Data,fd->block,
                AOURL_Datalength,length,
                TAG_END);
-             length = 0;
-             fd->block[0] = '\0';
+            length=0;
          }
-         length += SNPrintf(fd->block + length, fd->blocksize - length, "<BR>%.*s", (int)MAX_DESC, descr);
       }
       p++;
       Deleteinbuffer(&resp->buf,0,p-resp->buf.buffer);
@@ -480,13 +438,12 @@ static void Deleteperiods(struct Fetchdriver *fd,struct GResponse *resp,long rea
       p++;
       memmove(fd->block+length,begin,p-begin);
       length+=p-begin;
-      if(length > fd->blocksize - 1024)
+      if(length>INPUTBLOCKSIZE-1000)
       {  Updatetaskattrs(
             AOURL_Data,fd->block,
             AOURL_Datalength,length,
             TAG_END);
          length=0;
-         fd->block[0] = '\0';
       }
       Deleteinbuffer(&resp->buf,0,p-resp->buf.buffer);
    }
@@ -501,8 +458,8 @@ static void Deleteperiods(struct Fetchdriver *fd,struct GResponse *resp,long rea
 static void Makeindex(struct Fetchdriver *fd)
 {  long length;
    /* we ought to do different msg for cso and normal indexes */
-   length = SNPrintf(fd->block, fd->blocksize,
-      "<html><h1>%s</h1><isindex>", AWEBSTR(MSG_AWEB_GOPHERINDEX));
+   sprintf(fd->block,"<html><h1>%s</h1><isindex>",AWEBSTR(MSG_AWEB_GOPHERINDEX));
+   length=strlen(fd->block);
    Updatetaskattrs(
       AOURL_Data,fd->block,
       AOURL_Datalength,length,
@@ -535,8 +492,7 @@ __saveds __asm void Fetchdrivertask(register __a0 struct Fetchdriver *fd)
                   {  Updatetaskattrs(AOURL_Netstatus,NWS_CONNECT,TAG_END);
                      Tcpmessage(fd,TCPMSG_CONNECT,"Gopher",hent->h_name);
                      if(!a_connect(sock,hent,ha.port,SocketBase))
-                     {  length = SNPrintf(fd->block, fd->blocksize,
-                           "%s\r\n", ha.selector ? ha.selector : "");
+                     {  length=sprintf(fd->block,"%s\r\n",ha.selector);
                         result=(a_send(sock,fd->block,length,0,SocketBase)==length);
                         if(result)
                         {  Updatetaskattrs(AOURL_Netstatus,NWS_WAIT,TAG_END);
