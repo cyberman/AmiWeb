@@ -389,9 +389,9 @@ extern void Freeuserkey(struct Userkey *uk);
 extern struct Userkey *Adduserkey(void *list,USHORT key,UBYTE *cmd);
 extern struct Userkey *Finduserkey(void *list,USHORT key);
 extern void Freefontalias(struct Fontalias *fa);
-extern struct Fontalias *Addfontalias(LIST(Fontalias) *list,UBYTE *alias);
+extern struct Fontalias *Addfontalias(void *list,UBYTE *alias);
 extern void Freemimeinfo(struct Mimeinfo *mi);
-extern struct Mimeinfo *Addmimeinfo(LIST(Mimeinfo) *list,UBYTE *type,UBYTE *subtype,
+extern struct Mimeinfo *Addmimeinfo(void *list,UBYTE *type,UBYTE *subtype,
    UBYTE *extensions,USHORT driver,UBYTE *cmd,UBYTE *args);
 extern void Freenocache(struct Nocache *nc);
 extern struct Nocache *Addnocache(void *list,UBYTE *name);

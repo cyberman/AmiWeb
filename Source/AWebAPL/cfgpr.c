@@ -785,7 +785,7 @@ BOOL Openprogram(void)
       if(*configname) AddPart(prefsname,configname,64);
       AddPart(prefsname,"program",64);
       nreq.nr_Name=prefsname;
-      nreq.nr_Port=nport;
+      nreq.nr_stuff.nr_Msg.nr_Port=nport;
       nreq.nr_Flags=NRF_SEND_MESSAGE;
       StartNotify(&nreq);
       Copyprogramprefs(&defprefs.program,&pgp);

@@ -1,13 +1,13 @@
 # AWeb 3
 
-This repository is the active development fork of AWeb 3 for classic Amiga systems.
+This repository is the active development fork of AWeb 3 for classic AmigaOS 3.2.x.
 
 The repository root contains the primary development tree.
 A reference snapshot of the upstream codebase is tracked separately under `vendor/amigazen-aweb3/`.
 
 ## Project direction
 
-- native AmigaOS APIs first
+- native AmigaOS 3.2 APIs first
 - plain C89 in core code
 - compiler-agnostic source where practical
 - small, reviewable maintenance steps
@@ -15,7 +15,7 @@ A reference snapshot of the upstream codebase is tracked separately under `vendo
 
 ## About this fork
 
-AWeb is an HTML 3 /4 era web browser for Amiga. This fork focuses on maintaining and improving the codebase as a native classic Amiga application for AmigaOS 3, with emphasis on buildability, system integration, and long-term maintainability.
+AWeb is an HTML 3 /4 era web browser for Amiga. This fork focuses on maintaining and improving the codebase as a native classic Amiga application for AmigaOS 3.2, with emphasis on buildability, system integration, and long-term maintainability.
 
 The original authors of AWeb are not affiliated with this fork. Redistribution remains subject to the terms described in the project documentation, especially `LICENSE` and `LICENSE.md`.
 

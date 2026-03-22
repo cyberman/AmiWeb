@@ -1858,14 +1858,14 @@ BOOL Opennetwork(void)
       if(*configname) AddPart(prefsname1,configname,64);
       AddPart(prefsname1,"network",64);
       nreq1.nr_Name=prefsname1;
-      nreq1.nr_Port=nport;
+      nreq1.nr_stuff.nr_Msg.nr_Port=nport;
       nreq1.nr_Flags=NRF_SEND_MESSAGE;
       StartNotify(&nreq1);
       strcpy(prefsname2,"ENV:" DEFAULTCFG);
       if(*configname) AddPart(prefsname2,configname,64);
       AddPart(prefsname2,"nocookie",64);
       nreq2.nr_Name=prefsname2;
-      nreq2.nr_Port=nport;
+      nreq2.nr_stuff.nr_Msg.nr_Port=nport;
       nreq2.nr_Flags=NRF_SEND_MESSAGE;
       StartNotify(&nreq2);
       Copynetworkprefs(&defprefs.network,&nwp);

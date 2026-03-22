@@ -64,9 +64,9 @@ struct Coords              /* accumulated coordinates for displaying */
 };
 
 /* General purpose backfill hook (defined in aweb.c) */
-extern void __saveds __asm Awebbackfillhook(register __a0 struct Hook *hook,
-   register __a2 struct RastPort *lrp,
-   register __a1 struct Layermessage *msg);
+extern void Awebbackfillhook(struct Hook *hook,
+   struct RastPort *lrp,
+   struct Layermessage *msg);
 
 struct Abackfilldata       /* Hook data for Awebbackfillhook() */
 {  long fgpen;
@@ -75,7 +75,6 @@ struct Abackfilldata       /* Hook data for Awebbackfillhook() */
 };
 #define ABKFIL_BACKFILL    0x0001   /* Fill area with bgpen */
 #define ABKFIL_BORDER      0x0002   /* Draw border in fgpen */
-
 
 extern struct LocaleInfo localeinfo;
 #define AWEBSTR(n)      GetString(&localeinfo,(n))

@@ -1098,7 +1098,7 @@ static void Dobutsort(void)
    list.last = NULL;
    while(ub=REMHEAD(&uip.buttons))
    {  for(uc=list.first;uc->next;uc=uc->next)
-      {  if(stricmp(ub->label,uc->label)<0) break;
+      {  if(Stricmp(ub->label,uc->label)<0) break;
       }
       INSERT(&list,ub,uc->prev);
    }
@@ -1243,7 +1243,7 @@ static void Dopupsort(void)
    list.last = NULL;
    while(pi=REMHEAD(&uip.popupmenu[popuptype]))
    {  for(pj=list.first;pj->next;pj=pj->next)
-      {  if(stricmp(pi->title,pj->title)<0) break;
+      {  if(Stricmp(pi->title,pj->title)<0) break;
       }
       INSERT(&list,pi,pj->prev);
    }
@@ -1601,8 +1601,8 @@ static void Setdata(void)
 
 /*---------------------------------------------------------------------------*/
 
-static long __saveds __asm Idcmphook(register __a0 struct Hook *hook,
-   register __a1 struct IntuiMessage *msg)
+static long Idcmphook(struct Hook *hook,
+   struct IntuiMessage *msg)
 {  switch(msg->Class)
    {  case IDCMP_RAWKEY:
          if(msg->Qualifier&IEQUALIFIER_CONTROL) control=TRUE;
@@ -1763,7 +1763,7 @@ BOOL Opengui(void)
       if(*configname) AddPart(prefsname,configname,64);
       AddPart(prefsname,"gui",64);
       nreq.nr_Name=prefsname;
-      nreq.nr_Port=nport;
+      nreq.nr_stuff.nr_Msg.nr_Port=nport;
       nreq.nr_Flags=NRF_SEND_MESSAGE;
       StartNotify(&nreq);
       Copyguiprefs(&defprefs.gui,&uip);

@@ -133,10 +133,9 @@ extern BOOL has35;
 #define OSDEP(a,b) (has35?(b):(a))
 #endif
 
-
 extern struct LocaleInfo localeinfo;
-extern STRPTR __asm GetString(register __a0 struct LocaleInfo *li,
-                              register __d0 long stringnum);
+extern STRPTR GetString(struct LocaleInfo *li, long stringnum);
+
 #ifndef CFGAWEBSTR
 #define CFGAWEBSTR(n)   GetString(&localeinfo,(n))
 #endif

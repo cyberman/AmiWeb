@@ -13,7 +13,7 @@
 #include <proto/utility.h>
 
 #ifndef STRNIEQUAL
-#define STRNIEQUAL(a,b,n)  (Strnicmp((a),(b),(n)) == SAME)
+#define STRNIEQUAL(a,b,n)  (Strnicmp((a),(b),(n)) == 0)
 #endif
 
 #ifndef STRNEQUAL
@@ -21,7 +21,7 @@
 #endif
 
 #ifndef STRIEQUAL
-#define STRIEQUAL(a,b)     (Stricmp((a),(b)) == SAME)
+#define STRIEQUAL(a,b)     (Stricmp((a),(b)) == 0)
 #endif
 
 #ifndef STREQUAL

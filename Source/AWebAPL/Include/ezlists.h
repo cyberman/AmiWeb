@@ -45,7 +45,7 @@ char *ln_Name
 /* only use full nodes for this macro!! */
 #define ENQUEUE(l,n) Enqueue((struct List *)(l),(struct Node *)(n))
 
-#define REMOVE(n) (void *)Remove((struct Node *)(n))
+#define REMOVE(n) Remove((struct Node *)(n))
 #define REMHEAD(l) (void *)RemHead((struct List *)(l))
 #define REMTAIL(l) (void *)RemTail((struct List *)(l))
 #define NEWLIST(l) NewList((struct List *)(l))

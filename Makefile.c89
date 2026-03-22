@@ -1,0 +1,23 @@
+include mk/config.mk
+include mk/sources-cfg.mk
+include mk/sources-tools.mk
+include mk/toolchain-vbcc.mk
+
+.PHONY: all awebcfg awebcfg-objs tools clean
+
+all: awebcfg-objs tools
+
+awebcfg: awebcfg-objs
+	@echo "awebcfg objects prepared under $(OBJ_DIR)"
+	@echo "link step intentionally deferred until vbcc library/startup mapping is defined"
+
+awebcfg-objs: $(CFG_STAMP)
+
+$(CFG_STAMP): $(CFG_OBJ_FILES) $(CFG_CATCOMP_OBJ)
+	@touch $@
+
+tools:
+	@echo "TODO: wire docs/makeindex and docs/searchindex"
+
+clean:
+	rm -rf $(BUILD_DIR)

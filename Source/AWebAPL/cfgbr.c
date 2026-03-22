@@ -850,7 +850,7 @@ static void Dofontalias(void)
          fa->alias=name;
          REMOVE(fa);
          for(fb=brp.aliaslist.first;fb->next;fb=fb->next)
-         {  if(stricmp(fa->alias,fb->alias)<0) break;
+         {  if(Stricmp(fa->alias,fb->alias)<0) break;
          }
          INSERT(&brp.aliaslist,fa,fb->prev);
          Setgadgetattrs(fonttypegad,window,NULL,LISTBROWSER_Labels,~0,TAG_END);
@@ -1338,7 +1338,7 @@ BOOL Openbrowser(void)
       if(*configname) AddPart(prefsname,configname,64);
       AddPart(prefsname,"browser",64);
       nreq.nr_Name=prefsname;
-      nreq.nr_Port=nport;
+      nreq.nr_stuff.nr_Msg.nr_Port=nport;
       nreq.nr_Flags=NRF_SEND_MESSAGE;
       StartNotify(&nreq);
       Copybrowserprefs(&defprefs.browser,&brp);

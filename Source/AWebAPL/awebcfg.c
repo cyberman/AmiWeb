@@ -28,11 +28,6 @@ const char *stack_cookie = "$STACK: 8192";
 // IntuitionBase, LocaleBase, GfxBase are provided by proto headers
 struct Library *IconBase,*GadToolsBase,*AslBase,*ColorWheelBase,*GradientSliderBase;
 
-// Class library base pointers - these are provided by proto headers
-struct ClassLibrary *WindowBase,*LayoutBase,*ButtonBase,
-   *ListBrowserBase,*ChooserBase,*IntegerBase,*SpaceBase,*CheckBoxBase,
-   *StringBase,*LabelBase,*PaletteBase,*GlyphBase,*ClickTabBase;
-
 struct LocaleInfo localeinfo;
 
 static UBYTE versionstring[]="$VER:AWebCfg " AWEBVERSION RELEASECLASS " " __AMIGADATE__;
@@ -149,8 +144,8 @@ void Lowlevelreq(UBYTE *msg,...)
       es.es_GadgetFormat="Ok";
       EasyRequestArgs(NULL,&es,NULL,args);
       if(opened)
-      {  CloseLibrary(IntuitionBase);
-         IntuitionBase=NULL;
+      {  CloseLibrary((struct Library *)IntuitionBase);
+         IntuitionBase=(struct IntuitionBase *)NULL;
       }
    }
    else
@@ -170,7 +165,7 @@ static struct Library *Openlib(UBYTE *name,long version)
    return lib;
 }
 
-#define Openclass(name) (struct ClassLibrary *)Openlib(name,OSNEED(0,44))
+#define OpenCfgClass(name) Openlib((name),OSNEED(0,44))
 
 static void Getarguments(struct WBStartup *wbs)
 {  long args[8]={0};
@@ -213,15 +208,15 @@ static BOOL Dupstartupcheck(void)
    if(cfgport=CreateMsgPort())
    {  Forbid();
       if(port=FindPort(AWEBCFGPORTNAME))
-      {  msg.mn_ReplyPort=cfgport;
+      {  msg.msg.mn_ReplyPort=cfgport;
          if(browser) msg.cfgclass|=CFGCLASS_BROWSER;
          if(program) msg.cfgclass|=CFGCLASS_PROGRAM;
          if(gui) msg.cfgclass|=CFGCLASS_GUI;
          if(network) msg.cfgclass|=CFGCLASS_NETWORK;
-         PutMsg(port,&msg);
+         PutMsg(port,(struct Message *)&msg);
       }
       else
-      {  cfgport->ln_Name=AWEBCFGPORTNAME;
+      {  cfgport->mp_Node.ln_Name=AWEBCFGPORTNAME;
          AddPort(cfgport);
       }
       Permit();
@@ -242,7 +237,7 @@ static void Processcfgport(void)
 {  struct Cfgmsg *msg;
    while(msg=(struct Cfgmsg *)GetMsg(cfgport))
    {  cfgcommand|=msg->cfgclass;
-      ReplyMsg(msg);
+      ReplyMsg((struct Message *)msg);
    }
 }
 
@@ -490,10 +485,10 @@ UBYTE *Prefsscreenmodename(ULONG modeid,long w,long h,long d)
    UBYTE *p=NULL;
    long len;
    if(!GetDisplayInfoData(NULL,(UBYTE *)&ni,sizeof(ni),DTAG_NAME,modeid))
-      strcpy(ni.Name,"(????)");
+      strcpy(ni.Name,"(unknown)");
    len=strlen(ni.Name)+24;
    if(p=ALLOCTYPE(UBYTE,len,MEMF_PUBLIC))
-   {  sprintf(p,"%s, %d � %d � %d",ni.Name,w,h,1<<d);
+   {  sprintf(p,"%s, %ld x %ld x %ld",ni.Name,(long)w,(long)h,(long)(1<<d));
    }
    return p;
 }
@@ -549,7 +544,7 @@ BOOL Popcolor(void *winobj,struct Window *pwin,struct Gadget *layout,
    winw=2*gadw+16;
    if(winw<152) winw=152;
    sliderw=winw-8-labelw;
-   ta.ta_Name=scr->RastPort.Font->ln_Name;
+   ta.ta_Name=scr->RastPort.Font->tf_Message.mn_Node.ln_Name;
    ta.ta_YSize=scr->RastPort.Font->tf_YSize;
    gad=CreateContext(&glist);
    ng.ng_TextAttr=&ta;
@@ -822,7 +817,7 @@ void Dimensions(struct Window *window,short *dim)
    }
 }
 
-void main(int fromcli,struct WBStartup *wbs)
+int main(int fromcli,struct WBStartup *wbs)
 {  ULONG gotmask,cfgmask;
    short nrwindows=0;
    struct Library *WorkbenchBase=OpenLibrary("workbench.library",0);
@@ -838,19 +833,19 @@ void main(int fromcli,struct WBStartup *wbs)
    && (AslBase=(struct Library *)Openlib("asl.library",OSNEED(39,44)))
    && (ColorWheelBase=(struct Library *)Openlib("gadgets/colorwheel.gadget",OSNEED(39,44)))
    && (GradientSliderBase=(struct Library *)Openlib("gadgets/gradientslider.gadget",OSNEED(39,44)))
-   && (WindowBase=(struct ClassLibrary *)Openclass("window.class"))
-   && (LayoutBase=(struct ClassLibrary *)Openclass("gadgets/layout.gadget"))
-   && (ButtonBase=(struct ClassLibrary *)Openclass("gadgets/button.gadget"))
-   && (ListBrowserBase=(struct ClassLibrary *)Openclass("gadgets/listbrowser.gadget"))
-   && (ChooserBase=(struct ClassLibrary *)Openclass("gadgets/chooser.gadget"))
-   && (IntegerBase=(struct ClassLibrary *)Openclass("gadgets/integer.gadget"))
-   && (SpaceBase=(struct ClassLibrary *)Openclass("gadgets/space.gadget"))
-   && (CheckBoxBase=(struct ClassLibrary *)Openclass("gadgets/checkbox.gadget"))
-   && (StringBase=(struct ClassLibrary *)Openclass("gadgets/string.gadget"))
-   && (PaletteBase=(struct ClassLibrary *)Openclass("gadgets/palette.gadget"))
-   && (ClickTabBase=(struct ClassLibrary *)Openclass("gadgets/clicktab.gadget"))
-   && (LabelBase=(struct ClassLibrary *)Openclass("images/label.image"))
-   && (GlyphBase=(struct ClassLibrary *)Openclass("images/glyph.image"))
+   && (WindowBase=OpenCfgClass("window.class"))
+   && (LayoutBase=OpenCfgClass("gadgets/layout.gadget"))
+   && (ButtonBase=OpenCfgClass("gadgets/button.gadget"))
+   && (ListBrowserBase=OpenCfgClass("gadgets/listbrowser.gadget"))
+   && (ChooserBase=OpenCfgClass("gadgets/chooser.gadget"))
+   && (IntegerBase=OpenCfgClass("gadgets/integer.gadget"))
+   && (SpaceBase=OpenCfgClass("gadgets/space.gadget"))
+   && (CheckBoxBase=OpenCfgClass("gadgets/checkbox.gadget"))
+   && (StringBase=OpenCfgClass("gadgets/string.gadget"))
+   && (PaletteBase=OpenCfgClass("gadgets/palette.gadget"))
+   && (ClickTabBase=OpenCfgClass("gadgets/clicktab.gadget"))
+   && (LabelBase=OpenCfgClass("images/label.image"))
+   && (GlyphBase=OpenCfgClass("images/glyph.image"))
    && Initmemory()
    )
    {  
@@ -920,4 +915,5 @@ void main(int fromcli,struct WBStartup *wbs)
       }
    }
    Cleanup();
+   return 0;
 }
