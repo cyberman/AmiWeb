@@ -37,6 +37,7 @@
 #include <exec/memory.h>
 
 #include <proto/exec.h>
+#include <proto/rexxsyslib.h>
 
 #include <rexx/storage.h>
 #include <rexx/errors.h>
@@ -44,29 +45,6 @@
 
 #include <string.h>
 #include <ctype.h>
-
-/*
- * The prototypes for the few ARexx functions we will call...
- */
-struct RexxMsg *CreateRexxMsg(struct MsgPort *,char *,char *);
-void *CreateArgstring(char *,long);
-void DeleteRexxMsg(struct RexxMsg *);
-void DeleteArgstring(char *);
-BOOL IsRexxMsg(struct Message *);
-
-struct Library *RexxSysBase;
-
-/*
- * Pragmas for the above functions...  (To make this all self-contained...)
- * If you use RexxGlue.o, this is not needed...
- *
- * These are for Lattice C 5.x  (Note the use of RexxContext->RexxSysBase)
- */
-#pragma libcall RexxSysBase CreateRexxMsg 90 09803
-#pragma libcall RexxSysBase CreateArgstring 7E 0802
-#pragma libcall RexxSysBase DeleteRexxMsg 96 801
-#pragma libcall RexxSysBase DeleteArgstring 84 801
-#pragma libcall RexxSysBase IsRexxMsg A8 801
 
 /*
  * Prototypes for the RVI ARexx calls...  (link with RexxVars.o)
