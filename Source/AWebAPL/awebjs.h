@@ -23,18 +23,17 @@
 
 #include <exec/types.h>
 #include <exec/memory.h>
+
 #include <ezlists.h>
 
-#include <clib/exec_protos.h>
-#include <clib/alib_protos.h>
-#include <clib/locale_protos.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <pragmas/exec_pragmas.h>
-#include <pragmas/locale_pragmas.h>
+
+#include <proto/exec.h>
+#include <proto/locale.h>
 
 /* #define JSDEBUG */
 /* #define JSADDRESS */

@@ -24,9 +24,6 @@
 #include <exec/types.h>
 #include "ezlists.h"
 
-#include <clib/exec_protos.h>
-#include <clib/alib_protos.h>
-#include <clib/dos_protos.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
