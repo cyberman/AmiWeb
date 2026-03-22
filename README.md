@@ -1,32 +1,34 @@
 # AWeb 3
 
-This is AWeb 3 APL open source version, an HTML 3/4 web browser for Amiga.
+This repository is the active development fork of AWeb 3 for classic Amiga systems.
 
-## [amigazen project](http://www.amigazen.com)
+The repository root contains the primary development tree.
+A reference snapshot of the upstream codebase is tracked separately under `vendor/amigazen-aweb3/`.
 
-*A web, suddenly*
+## Project direction
 
-*Forty years meditation*
+- native AmigaOS APIs first
+- plain C89 in core code
+- compiler-agnostic source where practical
+- small, reviewable maintenance steps
+- reproducible build and test discipline
 
-*Minds awaken, free*
+## About this fork
 
-**amigazen project** is using modern software development tools and methods to update and rerelease classic Amiga open source software. Projects include a new AWeb, a new Amiga Python 2, and the ToolKit project - a universal SDK for Amiga.
+AWeb is an HTML 3 /4 era web browser for Amiga. This fork focuses on maintaining and improving the codebase as a native classic Amiga application for AmigaOS 3, with emphasis on buildability, system integration, and long-term maintainability.
 
-Key to the amigazen project approach is ensuring every project can be built with the same common set of development tools and configurations, so the ToolKit project was created to provide a standard configuration for Amiga development. All *amigazen project* releases will be guaranteed to build against the ToolKit standard so that anyone can download and begin contributing straightaway without having to tailor the toolchain for their own setup.
+The original authors of AWeb are not affiliated with this fork. Redistribution remains subject to the terms described in the project documentation, especially `LICENSE` and `LICENSE.md`.
 
-The original authors of the *AWeb* software are not affiliated with the amigazen project. This software is redistributed on terms described in the documentation, particularly the file LICENSE or LICENSE.md
+## Repository layout
 
-The amigazen project philosophy philosophy is based on openness:
-
-*Open* to anyone and everyone	- *Open* source and free for all	- *Open* your mind and create!
-
-PRs for all projects are gratefully received at [GitHub](https://github.com/amigazen/). While the focus now is on classic 68k software, it is intended that all amigazen project releases can be ported to other Amiga-like systems including AROS and MorphOS where feasible.
+- repository root: active fork development
+- `vendor/amigazen-aweb3/`: imported upstream reference snapshot
 
 ## About AWeb 3
 
-AWeb is one of the most sophisticated web browsers (for its time) ever released on the Amiga platform. The original author, Yvon Rozijn, kindly made AWeb open source under the AWeb Public License. 
+AWeb is one of the most sophisticated web browsers of its era on the Amiga platform. The original author, Yvon Rozijn, released AWeb as open source under the AWeb Public License.
 
-This project's first aim is to update the code so it builds against the NDK3.2, which largely means replacing the ClassAct UI APIs with the equivalent ReAction versions, as well as updating the networking code to work properly with RoadShow and the latest AmiSSL, and ensuring it can be built easily out of the box against the ToolKit standard by anyone with an Amiga computer.
+This fork continues development on a classic Amiga baseline with a focus on native APIs, maintainable source code, and a reproducible development workflow.
 
 ## HTML Standards Support
 
