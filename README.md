@@ -1,6 +1,6 @@
-# AWeb 3
+# AmiWeb
 
-This repository is the active development fork of AmiWeb for classic AmigaOS 3.2+ only.
+This repository is the active development of AmiWeb for classic AmigaOS 3.2+ only.
 
 The repository root contains the primary development tree.
 A reference snapshot of the AWeb 3.6 upstream codebase is tracked separately under `vendor/amigazen-aweb3/`.
