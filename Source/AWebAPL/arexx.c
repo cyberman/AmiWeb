@@ -23,8 +23,6 @@
 #include "simplerexx.h"
 #include "application.h"
 #include <dos/dos.h>
-#include <proto/exec.h>
-#include <proto/dos.h>
 #include <proto/arexx.h>
 
 /* ARexx command templates */
